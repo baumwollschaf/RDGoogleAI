@@ -22,7 +22,8 @@ uses
   REST.JSON,
   RD.GoogleAI.Gemini.Model,
   RD.GoogleAI.Input.Model,
-  RD.GoogleAI.Interfaces,
+  RD.GoogleAI.Types,
+  RD.GoogleAI.DTO.Models,
   System.Generics.Collections;
 {$METHODINFO ON}
 {$M+}
@@ -49,7 +50,7 @@ type
     property ApiKey: string read FApiKey write FApiKey;
   end;
 
-  TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection, IAIRESTClient)
+  TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection)
   public const
     cDEFAULT_USER_AGENT = 'RD GOOGLE AI CONNECT';
   strict private
@@ -68,9 +69,6 @@ type
   protected
     FRestClient: TCustomRESTClient;
     property BaseURL: string read GetBaseURL write SetBaseURL;
-  protected
-    // IAIRESTClient
-    function GetRESTClient: TCustomRESTClient;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -83,17 +81,39 @@ type
     property ProxyPort: Integer read GetProxyPort write SetProxyPort default 0;
   end;
 
-  TRDGoolgeAI = class(TRDGoogleAIRestClient)
+  TRDGoolgeAI = class(TRDGoogleAIRestClient, IAIRESTClient)
   private
     FModel: String;
+    FRequestInfoProc: TRequestInfoProc;
+    FOnModelsLoaded: TTypedEvent<TModels>;
+    FOnError: TTypedEvent<string>;
+
+    FAIModels: TAIModels;
+
     function GetURL: string;
     procedure SetURL(const Value: string);
+  protected
+    // IAIRESTClient
+    function GetRESTClient: TCustomRESTClient;
+    function GetApiKey: String;
+
+    function GetRequestInfoProc: TRequestInfoProc;
+    procedure SetRequestInfoProc(const Value: TRequestInfoProc);
+    function GetOnModelsLoaded: TTypedEvent<TModels>;
+    procedure SetOnModelsLoaded(const Value: TTypedEvent<TModels>);
+    function GetOnError: TTypedEvent<string>;
+    procedure SetOnError(const Value: TTypedEvent<string>);
   public const
     cDEF_MODEL = 'models/gemini-pro';
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
   published
     property URL: string read GetURL write SetURL stored True;
     property Model: String read FModel write FModel;
+    property RequestInfoProc: TRequestInfoProc read GetRequestInfoProc write SetRequestInfoProc;
+    property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
+    property OnError: TTypedEvent<string> read GetOnError write SetOnError;
+  public
+    procedure LoadModels;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -180,11 +200,6 @@ begin
   Result := FRestClient.ProxyPort;
 end;
 
-function TRDGoogleAIRestClient.GetRESTClient: TCustomRESTClient;
-begin
-  Result := FRestClient;
-end;
-
 procedure TRDGoogleAIRestClient.SetAccept(const Value: string);
 begin
   FRestClient.Accept := Value;
@@ -226,13 +241,62 @@ end;
 
 destructor TRDGoolgeAI.Destroy;
 begin
-
+  FreeAndNil(FAIModels);
   inherited;
+end;
+
+function TRDGoolgeAI.GetApiKey: String;
+begin
+  Result := FApiKey;
+end;
+
+function TRDGoolgeAI.GetOnError: TTypedEvent<string>;
+begin
+  Result := FOnError;
+end;
+
+function TRDGoolgeAI.GetOnModelsLoaded: TTypedEvent<TModels>;
+begin
+  Result := FOnModelsLoaded;
+end;
+
+function TRDGoolgeAI.GetRequestInfoProc: TRequestInfoProc;
+begin
+  Result := FRequestInfoProc;
+end;
+
+function TRDGoolgeAI.GetRESTClient: TCustomRESTClient;
+begin
+  Result := FRestClient;
 end;
 
 function TRDGoolgeAI.GetURL: string;
 begin
   Result := BaseURL;
+end;
+
+procedure TRDGoolgeAI.LoadModels;
+begin
+  if FAIModels = nil then
+  begin
+    FAIModels := TAIModels.Create(Self, Self);
+  end;
+  FAIModels.Refresh;
+end;
+
+procedure TRDGoolgeAI.SetOnError(const Value: TTypedEvent<string>);
+begin
+  FOnError := Value;
+end;
+
+procedure TRDGoolgeAI.SetOnModelsLoaded(const Value: TTypedEvent<TModels>);
+begin
+  FOnModelsLoaded := Value;
+end;
+
+procedure TRDGoolgeAI.SetRequestInfoProc(const Value: TRequestInfoProc);
+begin
+  FRequestInfoProc := Value;
 end;
 
 procedure TRDGoolgeAI.SetURL(const Value: string);

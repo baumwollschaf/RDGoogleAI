@@ -111,7 +111,8 @@
         <DCCReference Include="RD.GoogleAI.Gemini.Model.pas"/>
         <DCCReference Include="RD.Pkg.Json.DTO.pas"/>
         <DCCReference Include="RD.GoogleAI.Input.Model.pas"/>
-        <DCCReference Include="RD.GoogleAI.Interfaces.pas"/>
+        <DCCReference Include="RD.GoogleAI.DTO.Models.pas"/>
+        <DCCReference Include="RD.GoogleAI.Types.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
