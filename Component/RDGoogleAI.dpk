@@ -30,4 +30,8 @@ package RDGoogleAI;
 requires
   rtl;
 
+contains
+  RD.GoogleAI.Gemini.ViewModel in 'RD.GoogleAI.Gemini.ViewModel.pas',
+  RD.GoogleAI.Gemini.Model in 'RD.GoogleAI.Gemini.Model.pas';
+
 end.
