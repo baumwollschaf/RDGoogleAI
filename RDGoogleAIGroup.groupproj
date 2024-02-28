@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{E43A6590-DE12-4B5B-BAE3-AB3909ABA74C}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Component\RDGoogleAI.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="RDGoogleAI">
+        <MSBuild Projects="Component\RDGoogleAI.dproj"/>
+    </Target>
+    <Target Name="RDGoogleAI:Clean">
+        <MSBuild Projects="Component\RDGoogleAI.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="RDGoogleAI:Make">
+        <MSBuild Projects="Component\RDGoogleAI.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="RDGoogleAI"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="RDGoogleAI:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="RDGoogleAI:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
