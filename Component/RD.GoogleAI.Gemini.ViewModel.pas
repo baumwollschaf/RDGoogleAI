@@ -22,6 +22,7 @@ uses
   REST.JSON,
   RD.GoogleAI.Gemini.Model,
   RD.GoogleAI.Input.Model,
+  RD.GoogleAI.Interfaces,
   System.Generics.Collections;
 {$METHODINFO ON}
 {$M+}
@@ -48,7 +49,7 @@ type
     property ApiKey: string read FApiKey write FApiKey;
   end;
 
-  TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection)
+  TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection, IAIRESTClient)
   public const
     cDEFAULT_USER_AGENT = 'RD GOOGLE AI CONNECT';
   strict private
@@ -67,6 +68,9 @@ type
   protected
     FRestClient: TCustomRESTClient;
     property BaseURL: string read GetBaseURL write SetBaseURL;
+  protected
+    // IAIRESTClient
+    function GetRESTClient: TCustomRESTClient;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -79,12 +83,23 @@ type
     property ProxyPort: Integer read GetProxyPort write SetProxyPort default 0;
   end;
 
-  TRDGoolgeAI = class (TRDGoogleAIRestClient)
+  TRDGoolgeAI = class(TRDGoogleAIRestClient)
+  private
+    FModel: String;
+    function GetURL: string;
+    procedure SetURL(const Value: string);
   public const
+    cDEF_MODEL = 'models/gemini-pro';
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
+  published
+    property URL: string read GetURL write SetURL stored True;
+    property Model: String read FModel write FModel;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
   end;
 
-  TRDGoogleAIGemini = class (TRDGoolgeAI)
+  TRDGoogleAIGemini = class(TRDGoolgeAI)
 
   end;
 
@@ -165,6 +180,11 @@ begin
   Result := FRestClient.ProxyPort;
 end;
 
+function TRDGoogleAIRestClient.GetRESTClient: TCustomRESTClient;
+begin
+  Result := FRestClient;
+end;
+
 procedure TRDGoogleAIRestClient.SetAccept(const Value: string);
 begin
   FRestClient.Accept := Value;
@@ -193,6 +213,31 @@ end;
 procedure TRDGoogleAIRestClient.SetProxyPort(const Value: Integer);
 begin
   FRestClient.ProxyPort := Value;
+end;
+
+{ TRDGoolgeAI }
+
+constructor TRDGoolgeAI.Create(AOwner: TComponent);
+begin
+  inherited;
+  URL := cDEF_BASE_URL;
+  FModel := cDEF_MODEL;
+end;
+
+destructor TRDGoolgeAI.Destroy;
+begin
+
+  inherited;
+end;
+
+function TRDGoolgeAI.GetURL: string;
+begin
+  Result := BaseURL;
+end;
+
+procedure TRDGoolgeAI.SetURL(const Value: string);
+begin
+  BaseURL := Value;
 end;
 
 end.

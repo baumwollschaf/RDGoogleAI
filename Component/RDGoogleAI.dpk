@@ -44,6 +44,7 @@ contains
   RD.GoogleAI.Gemini.ViewModel in 'RD.GoogleAI.Gemini.ViewModel.pas',
   RD.GoogleAI.Gemini.Model in 'RD.GoogleAI.Gemini.Model.pas',
   RD.Pkg.Json.DTO in 'RD.Pkg.Json.DTO.pas',
-  RD.GoogleAI.Input.Model in 'RD.GoogleAI.Input.Model.pas';
+  RD.GoogleAI.Input.Model in 'RD.GoogleAI.Input.Model.pas',
+  RD.GoogleAI.Interfaces in 'RD.GoogleAI.Interfaces.pas';
 
 end.
