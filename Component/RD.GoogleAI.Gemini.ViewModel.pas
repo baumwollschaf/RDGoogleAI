@@ -50,7 +50,6 @@ type
 
   TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection)
   public const
-    cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
     cDEFAULT_USER_AGENT = 'RD GOOGLE AI CONNECT';
   strict private
     function GetAccept: string;
@@ -81,7 +80,8 @@ type
   end;
 
   TRDGoolgeAI = class (TRDGoogleAIRestClient)
-
+  public const
+    cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
   end;
 
   TRDGoogleAIGemini = class (TRDGoolgeAI)
