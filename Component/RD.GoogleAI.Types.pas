@@ -14,6 +14,7 @@ type
   IAIRESTClient = interface
     ['{E9EEA633-4528-496C-8405-3262CFB508A7}']
     function GetRESTClient: TCustomRESTClient;
+    function GetApiKey: String;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
