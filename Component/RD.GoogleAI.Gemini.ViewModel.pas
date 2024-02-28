@@ -38,12 +38,14 @@ type
     cDEF_TOP_P = 0.95;
     cDEF_TOP_K = 5;
   private
+    FApiKey: string;
     FConfig: TGenerationConfig;
     function GetVersion: String;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
+    property ApiKey: string read FApiKey write FApiKey;
     property Config: TGenerationConfig read FConfig;
   end;
 
