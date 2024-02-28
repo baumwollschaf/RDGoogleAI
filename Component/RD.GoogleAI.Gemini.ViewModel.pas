@@ -39,14 +39,14 @@ type
     cDEF_TOP_K = 5;
   private
     FApiKey: string;
-    FConfig: TGenerationConfig;
+    FGenerationConfig: TGenerationConfig;
     function GetVersion: String;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   published
     property ApiKey: string read FApiKey write FApiKey;
-    property Config: TGenerationConfig read FConfig;
+    property GenerationConfig: TGenerationConfig read FGenerationConfig;
   end;
 
 procedure Register;
@@ -63,16 +63,16 @@ end;
 constructor TRDGoogleAIConnection.Create(AOwner: TComponent);
 begin
   inherited;
-  FConfig := TGenerationConfig.Create;
-  FConfig.MaxOutputTokens := cDEF_MAX_OUTPUT_TOKENS;
-  FConfig.Temperature := cDEF_TEMP;
-  FConfig.TopK := cDEF_TOP_K;
-  FConfig.TopP := cDEF_TOP_P;
+  FGenerationConfig := TGenerationConfig.Create;
+  FGenerationConfig.MaxOutputTokens := cDEF_MAX_OUTPUT_TOKENS;
+  FGenerationConfig.Temperature := cDEF_TEMP;
+  FGenerationConfig.TopK := cDEF_TOP_K;
+  FGenerationConfig.TopP := cDEF_TOP_P;
 end;
 
 destructor TRDGoogleAIConnection.Destroy;
 begin
-  FConfig.Free;
+  FGenerationConfig.Free;
   inherited;
 end;
 
