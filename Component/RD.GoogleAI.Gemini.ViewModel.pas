@@ -55,7 +55,7 @@ implementation
 
 procedure Register;
 begin
-  // RegisterComponents('RD AI', [TRD blabla]);
+  // RegisterComponents('RD AI', [TRDGoogleAIGemini]);
 end;
 
 { TRDGoogleAIConnection }
