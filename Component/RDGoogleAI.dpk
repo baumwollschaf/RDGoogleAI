@@ -28,10 +28,22 @@ package RDGoogleAI;
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  dbrtl,
+  bindengine,
+  CustomIPTransport,
+  IndyIPCommon,
+  IndySystem,
+  IndyProtocols,
+  IndyCore,
+  IndyIPClient,
+  bindcomp,
+  RESTComponents;
 
 contains
   RD.GoogleAI.Gemini.ViewModel in 'RD.GoogleAI.Gemini.ViewModel.pas',
-  RD.GoogleAI.Gemini.Model in 'RD.GoogleAI.Gemini.Model.pas';
+  RD.GoogleAI.Gemini.Model in 'RD.GoogleAI.Gemini.Model.pas',
+  Pkg.Json.DTO in 'Pkg.Json.DTO.pas',
+  RD.GoogleAI.Input.Model in 'RD.GoogleAI.Input.Model.pas';
 
 end.
