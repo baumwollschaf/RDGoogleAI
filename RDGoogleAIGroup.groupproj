@@ -6,6 +6,9 @@
         <Projects Include="Component\RDGoogleAI.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="Example\GoogleAIExample.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -23,14 +26,23 @@
     <Target Name="RDGoogleAI:Make">
         <MSBuild Projects="Component\RDGoogleAI.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GoogleAIExample">
+        <MSBuild Projects="Example\GoogleAIExample.dproj"/>
+    </Target>
+    <Target Name="GoogleAIExample:Clean">
+        <MSBuild Projects="Example\GoogleAIExample.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GoogleAIExample:Make">
+        <MSBuild Projects="Example\GoogleAIExample.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="RDGoogleAI"/>
+        <CallTarget Targets="RDGoogleAI;GoogleAIExample"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="RDGoogleAI:Clean"/>
+        <CallTarget Targets="RDGoogleAI:Clean;GoogleAIExample:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="RDGoogleAI:Make"/>
+        <CallTarget Targets="RDGoogleAI:Make;GoogleAIExample:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

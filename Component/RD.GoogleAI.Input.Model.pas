@@ -3,7 +3,7 @@ unit RD.GoogleAI.Input.Model;
 interface
 
 uses
-  Pkg.Json.DTO,
+  RD.Pkg.Json.DTO,
   System.Generics.Collections,
   REST.Json.Types;
 
