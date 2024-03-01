@@ -40,12 +40,12 @@ type
     cDEF_TOP_K = 5;
   private
     FApiKey: string;
-    FGenerationConfig: TGenerationConfig;
+    FInputSettings: TInputSettings;
     function GetVersion: String;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property GenerationConfig: TGenerationConfig read FGenerationConfig;
+    property InputSettings: TInputSettings read FInputSettings;
   published
     property ApiKey: string read FApiKey write FApiKey;
   end;
@@ -86,6 +86,7 @@ type
     FModel: String;
     FRequestInfoProc: TRequestInfoProc;
     FOnModelsLoaded: TTypedEvent<TModels>;
+    FOnCandidatesLoaded: TTypedEvent<TCandidates>;
     FOnError: TTypedEvent<string>;
 
     FAIModels: TAIModels;
@@ -99,10 +100,16 @@ type
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
+
     function GetOnModelsLoaded: TTypedEvent<TModels>;
     procedure SetOnModelsLoaded(const Value: TTypedEvent<TModels>);
+
     function GetOnError: TTypedEvent<string>;
     procedure SetOnError(const Value: TTypedEvent<string>);
+
+    function GetOnCandidatesLoaded: TTypedEvent<TCandidates>;
+    procedure SetOnCandidatesLoaded(const Value: TTypedEvent<TCandidates>);
+
   public const
     cDEF_MODEL = 'models/gemini-pro';
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
@@ -112,6 +119,7 @@ type
     property RequestInfoProc: TRequestInfoProc read GetRequestInfoProc write SetRequestInfoProc;
     property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
+    property OnCandidatesLoaded: TTypedEvent<TCandidates> read GetOnCandidatesLoaded write SetOnCandidatesLoaded;
   public
     procedure LoadModels;
   public
@@ -137,16 +145,16 @@ end;
 constructor TRDGoogleAIConnection.Create(AOwner: TComponent);
 begin
   inherited;
-  FGenerationConfig := TGenerationConfig.Create;
-  FGenerationConfig.MaxOutputTokens := cDEF_MAX_OUTPUT_TOKENS;
-  FGenerationConfig.Temperature := cDEF_TEMP;
-  FGenerationConfig.TopK := cDEF_TOP_K;
-  FGenerationConfig.TopP := cDEF_TOP_P;
+  FInputSettings := TInputSettings.Create;
+  FInputSettings.GenerationConfig.MaxOutputTokens := cDEF_MAX_OUTPUT_TOKENS;
+  FInputSettings.GenerationConfig.Temperature := cDEF_TEMP;
+  FInputSettings.GenerationConfig.TopK := cDEF_TOP_K;
+  FInputSettings.GenerationConfig.TopP := cDEF_TOP_P;
 end;
 
 destructor TRDGoogleAIConnection.Destroy;
 begin
-  FGenerationConfig.Free;
+  FInputSettings.Free;
   inherited;
 end;
 
@@ -250,6 +258,11 @@ begin
   Result := FApiKey;
 end;
 
+function TRDGoolgeAI.GetOnCandidatesLoaded: TTypedEvent<TCandidates>;
+begin
+  Result := FOnCandidatesLoaded;
+end;
+
 function TRDGoolgeAI.GetOnError: TTypedEvent<string>;
 begin
   Result := FOnError;
@@ -282,6 +295,11 @@ begin
     FAIModels := TAIModels.Create(Self, Self);
   end;
   FAIModels.Refresh;
+end;
+
+procedure TRDGoolgeAI.SetOnCandidatesLoaded(const Value: TTypedEvent<TCandidates>);
+begin
+  FOnCandidatesLoaded := Value;
 end;
 
 procedure TRDGoolgeAI.SetOnError(const Value: TTypedEvent<string>);

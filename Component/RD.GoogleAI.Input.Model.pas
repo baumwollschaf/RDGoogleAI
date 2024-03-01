@@ -66,7 +66,7 @@ type
     destructor Destroy; override;
   end;
 
-  TRoot = class(TJsonDTO)
+  TInputSettings = class(TJsonDTO)
   private
     [JSONName('contents'), JSONMarshalled(False)]
     FContentsArray: TArray<TContents>;
@@ -132,13 +132,13 @@ end;
 
 { TRoot }
 
-constructor TRoot.Create;
+constructor TInputSettings.Create;
 begin
   inherited;
   FGenerationConfig := TGenerationConfig.Create;
 end;
 
-destructor TRoot.Destroy;
+destructor TInputSettings.Destroy;
 begin
   FGenerationConfig.Free;
   GetContents.Free;
@@ -146,17 +146,17 @@ begin
   inherited;
 end;
 
-function TRoot.GetContents: TObjectList<TContents>;
+function TInputSettings.GetContents: TObjectList<TContents>;
 begin
   Result := ObjectList<TContents>(FContents, FContentsArray);
 end;
 
-function TRoot.GetSafetySettings: TObjectList<TSafetySettings>;
+function TInputSettings.GetSafetySettings: TObjectList<TSafetySettings>;
 begin
   Result := ObjectList<TSafetySettings>(FSafetySettings, FSafetySettingsArray);
 end;
 
-function TRoot.GetAsJson: string;
+function TInputSettings.GetAsJson: string;
 begin
   RefreshArray<TContents>(FContents, FContentsArray);
   RefreshArray<TSafetySettings>(FSafetySettings, FSafetySettingsArray);

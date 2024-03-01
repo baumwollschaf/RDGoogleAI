@@ -24,6 +24,10 @@ type
     procedure SetOnModelsLoaded(const Value: TTypedEvent<TModels>);
     property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
 
+    function GetOnCandidatesLoaded: TTypedEvent<TCandidates>;
+    procedure SetOnCandidatesLoaded(const Value: TTypedEvent<TCandidates>);
+    property OnCandidatesLoaded: TTypedEvent<TCandidates> read GetOnCandidatesLoaded write SetOnCandidatesLoaded;
+
     function GetOnError: TTypedEvent<string>;
     procedure SetOnError(const Value: TTypedEvent<string>);
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
