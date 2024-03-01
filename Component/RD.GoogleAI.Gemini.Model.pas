@@ -22,7 +22,7 @@ uses
   REST.Response.Adapter,
   REST.Types,
   REST.JSON,
-  RD.Pkg.JSON.DTO,
+  RD.GoogleAI.Pkg.JSON.DTO,
   RD.GoogleAI.Types,
   RD.GoogleAI.DTO.Models,
   System.Generics.Collections;
@@ -41,10 +41,11 @@ type
     FLastError: string;
     [JSONMarshalled(False)]
     FBody: String;
-    class function GetResourcePath: String; virtual;
+    function GetResourcePath: String; virtual;
     procedure DoCompletionHandlerWithError(AObject: TObject);
     procedure DoError(AMessage: String);
   public
+    procedure Cancel;
     procedure Refresh; virtual;
     property Body: String read FBody write FBody;
     property LastError: string read FLastError;
@@ -58,7 +59,7 @@ type
     procedure ModelsCompletion;
     procedure DoFinishLoad(AModels: TModels);
   protected
-    class function GetResourcePath: String; override;
+    function GetResourcePath: String; override;
   public
     procedure Refresh; override;
     destructor Destroy; override;
@@ -70,7 +71,7 @@ type
     procedure CandidatesCompletion;
     procedure DoFinishLoad(ACandidates: TCandidates);
   protected
-    class function GetResourcePath: String; override;
+    function GetResourcePath: String; override;
   public
     procedure Refresh; override;
     destructor Destroy; override;
@@ -80,6 +81,14 @@ implementation
 
 uses
   REST.Utils;
+
+procedure TAIBaseEndpoint.Cancel;
+begin
+  if FRequest <> nil then
+  begin
+    FRequest.Cancel;
+  end;
+end;
 
 constructor TAIBaseEndpoint.Create(AOwner: TComponent; AAIRest: IAIRESTClient);
 begin
@@ -114,7 +123,7 @@ begin
   end;
 end;
 
-class function TAIBaseEndpoint.GetResourcePath: String;
+function TAIBaseEndpoint.GetResourcePath: String;
 begin
   Result := '';
 end;
@@ -151,7 +160,7 @@ begin
   end;
 end;
 
-class function TAIModels.GetResourcePath: String;
+function TAIModels.GetResourcePath: String;
 begin
   Result := 'models';
 end;
@@ -273,9 +282,9 @@ begin
   end;
 end;
 
-class function TAICandidates.GetResourcePath: String;
+function TAICandidates.GetResourcePath: String;
 begin
-  Result := 'models/gemini-pro:generateContent';
+  Result := FAIRest.GetModelName + ':' + 'generateContent ';
 end;
 
 procedure TAICandidates.Refresh;

@@ -42,10 +42,11 @@ type
     FApiKey: string;
     FInputSettings: TInputSettings;
     function GetVersion: String;
+  protected
+    property InputSettings: TInputSettings read FInputSettings;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property InputSettings: TInputSettings read FInputSettings;
   published
     property ApiKey: string read FApiKey write FApiKey;
   end;
@@ -89,7 +90,9 @@ type
     FOnCandidatesLoaded: TTypedEvent<TCandidates>;
     FOnError: TTypedEvent<string>;
 
+    // AI Models
     FAIModels: TAIModels;
+    FAICandidates: TAICandidates;
 
     function GetURL: string;
     procedure SetURL(const Value: string);
@@ -97,6 +100,7 @@ type
     // IAIRESTClient
     function GetRESTClient: TCustomRESTClient;
     function GetApiKey: String;
+    function GetModelName: String;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
@@ -121,7 +125,9 @@ type
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
     property OnCandidatesLoaded: TTypedEvent<TCandidates> read GetOnCandidatesLoaded write SetOnCandidatesLoaded;
   public
+    procedure Cancel;
     procedure LoadModels;
+    procedure Prompt(AValue: String; AModel: TModel = nil);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -134,6 +140,10 @@ type
 procedure Register;
 
 implementation
+
+uses
+  System.IOUtils,
+  REST.Utils;
 
 procedure Register;
 begin
@@ -240,6 +250,14 @@ end;
 
 { TRDGoolgeAI }
 
+procedure TRDGoolgeAI.Cancel;
+begin
+  if FAIModels <> nil then
+    FAIModels.Cancel;
+  if FAICandidates <> nil then
+    FAICandidates.Cancel;
+end;
+
 constructor TRDGoolgeAI.Create(AOwner: TComponent);
 begin
   inherited;
@@ -250,12 +268,18 @@ end;
 destructor TRDGoolgeAI.Destroy;
 begin
   FreeAndNil(FAIModels);
+  FreeAndNil(FAICandidates);
   inherited;
 end;
 
 function TRDGoolgeAI.GetApiKey: String;
 begin
   Result := FApiKey;
+end;
+
+function TRDGoolgeAI.GetModelName: String;
+begin
+  Result := FModel;
 end;
 
 function TRDGoolgeAI.GetOnCandidatesLoaded: TTypedEvent<TCandidates>;
@@ -295,6 +319,48 @@ begin
     FAIModels := TAIModels.Create(Self, Self);
   end;
   FAIModels.Refresh;
+end;
+
+procedure TRDGoolgeAI.Prompt(AValue: String; AModel: TModel);
+begin
+  FInputSettings.Contents.Clear;
+  var
+    C: TContents := TContents.Create;
+  var
+    P: RD.GoogleAI.Input.Model.TParts := RD.GoogleAI.Input.Model.TParts.Create;
+  P.Text := AValue;
+  C.Parts.Add(P);
+  FInputSettings.Contents.Add(C);
+
+  if FAICandidates = nil then
+  begin
+    FAICandidates := TAICandidates.Create(Self, Self);
+  end;
+
+  const
+    cBody = '{"contents": [{"parts":[{"text": "%s"}]}]}'; // keep it simple
+  var
+    Body: String;
+  if AModel = nil then
+  begin
+    Body := Format(cBody, [AValue]);
+  end
+  else
+  begin
+    FInputSettings.GenerationConfig.MaxOutputTokens := AModel.OutputTokenLimit;
+    FInputSettings.GenerationConfig.Temperature := AModel.Temperature;
+    FInputSettings.GenerationConfig.TopK := AModel.TopK;
+    FInputSettings.GenerationConfig.TopP := AModel.TopP;
+    Body := FInputSettings.AsJson;
+    Model := AModel.Name;
+  end;
+
+  FAICandidates.Body := Body;
+
+{$IFDEF DEBUG}
+  TFile.AppendAllText('C:\Users\rdietrich\Desktop\Json.txt', FAICandidates.Body);
+{$ENDIF}
+  FAICandidates.Refresh;
 end;
 
 procedure TRDGoolgeAI.SetOnCandidatesLoaded(const Value: TTypedEvent<TCandidates>);

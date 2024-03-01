@@ -109,7 +109,7 @@
         <DCCReference Include="RESTComponents.dcp"/>
         <DCCReference Include="RD.GoogleAI.Gemini.ViewModel.pas"/>
         <DCCReference Include="RD.GoogleAI.Gemini.Model.pas"/>
-        <DCCReference Include="RD.Pkg.Json.DTO.pas"/>
+        <DCCReference Include="RD.GoogleAI.Pkg.Json.DTO.pas"/>
         <DCCReference Include="RD.GoogleAI.Input.Model.pas"/>
         <DCCReference Include="RD.GoogleAI.DTO.Models.pas"/>
         <DCCReference Include="RD.GoogleAI.Types.pas"/>

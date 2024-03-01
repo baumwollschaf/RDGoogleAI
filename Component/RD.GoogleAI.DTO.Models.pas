@@ -3,7 +3,7 @@ unit RD.GoogleAI.DTO.Models;
 interface
 
 uses
-  RD.Pkg.Json.DTO,
+  RD.GoogleAI.Pkg.Json.DTO,
   System.Generics.Collections,
   REST.Json.Types;
 
@@ -135,15 +135,15 @@ type
   TCandidates = class(TJsonDTO)
   private
     [JSONName('candidates'), JSONMarshalled(False)]
-    FCandidatesArray: TArray<TCandidates>;
+    FCandidatesArray: TArray<TCandidate>;
     [GenericListReflect]
-    FCandidates: TObjectList<TCandidates>;
+    FCandidates: TObjectList<TCandidate>;
     FPromptFeedback: TPromptFeedback;
-    function GetCandidates: TObjectList<TCandidates>;
+    function GetCandidates: TObjectList<TCandidate>;
   protected
     function GetAsJson: string; override;
   published
-    property Candidates: TObjectList<TCandidates> read GetCandidates;
+    property Candidates: TObjectList<TCandidate> read GetCandidates;
     property PromptFeedback: TPromptFeedback read FPromptFeedback;
   public
     constructor Create; override;
@@ -267,14 +267,14 @@ begin
   inherited;
 end;
 
-function TCandidates.GetCandidates: TObjectList<TCandidates>;
+function TCandidates.GetCandidates: TObjectList<TCandidate>;
 begin
-  Result := ObjectList<TCandidates>(FCandidates, FCandidatesArray);
+  Result := ObjectList<TCandidate>(FCandidates, FCandidatesArray);
 end;
 
 function TCandidates.GetAsJson: string;
 begin
-  RefreshArray<TCandidates>(FCandidates, FCandidatesArray);
+  RefreshArray<TCandidate>(FCandidates, FCandidatesArray);
   Result := inherited;
 end;
 

@@ -1,4 +1,4 @@
-unit RD.Pkg.Json.DTO;
+unit RD.GoogleAI.Pkg.Json.DTO;
 
 interface
 
@@ -16,7 +16,6 @@ type
 
   TJsonDTO = class(TArrayMapper)
   private
-    FOptions: TJsonOptions;
     class procedure PrettyPrintPair(aJSONValue: TJSONPair; aOutputStrings: TStrings; Last: Boolean; Indent: Integer);
     class procedure PrettyPrintJSON(aJSONValue: TJsonValue; aOutputStrings: TStrings; Indent: Integer = 0); overload;
     class procedure PrettyPrintArray(aJSONValue: TJSONArray; aOutputStrings: TStrings; Last: Boolean; Indent: Integer);
@@ -49,12 +48,11 @@ uses System.Sysutils, System.JSONConsts, System.Rtti, System.DateUtils;
 constructor TJsonDTO.Create;
 begin
   inherited;
-  FOptions := [joDateIsUTC, joDateFormatISO8601];
 end;
 
 function TJsonDTO.GetAsJson: string;
 begin
-  Result := TJson.ObjectToJsonString(Self, FOptions);
+  Result := TJson.ObjectToJsonString(Self);
 end;
 
 const
@@ -173,7 +171,7 @@ begin
         raise EConversionError.Create(SCannotCreateObject);
     end;
 
-    TJson.JsonToObject(Self, JSONObject, FOptions);
+    TJson.JsonToObject(Self, JSONObject);
   finally
     JSONValue.Free;
   end;
