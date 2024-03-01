@@ -21,7 +21,6 @@ uses
   REST.Types,
   REST.JSON,
   RD.GoogleAI.Gemini.Model,
-  RD.GoogleAI.Input.Model,
   RD.GoogleAI.Types,
   RD.GoogleAI.DTO.Models,
   System.Generics.Collections;
@@ -327,7 +326,7 @@ begin
   var
     C: TContents := TContents.Create;
   var
-    P: RD.GoogleAI.Input.Model.TParts := RD.GoogleAI.Input.Model.TParts.Create;
+    P: TParts := TParts.Create;
   P.Text := AValue;
   C.Parts.Add(P);
   FInputSettings.Contents.Add(C);
