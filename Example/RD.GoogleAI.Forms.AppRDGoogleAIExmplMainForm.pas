@@ -13,7 +13,6 @@ uses
   Vcl.Forms,
   Vcl.Dialogs,
   RD.GoogleAI.DTO.Models,
-  RD.GoogleAI.Input.Model,
 {$IFDEF baumwollschaf}
   RD.GoogleAI.ApiKey,
 {$ENDIF}
