@@ -164,7 +164,7 @@ object AppRDGoogleAIExmplMainForm: TAppRDGoogleAIExmplMainForm
     OnModelsLoaded = RDGoogleAIGemini1ModelsLoaded
     OnError = RDGoogleAIGemini1Error
     OnCandidatesLoaded = RDGoogleAIGemini1CandidatesLoaded
-    Left = 144
-    Top = 392
+    Left = 184
+    Top = 384
   end
 end
