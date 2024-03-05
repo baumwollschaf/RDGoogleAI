@@ -284,7 +284,7 @@ end;
 
 function TAICandidates.GetResourcePath: String;
 begin
-  Result := FAIRest.GetModelName + ':' + 'generateContent ';
+  Result := FAIRest.GetModelName + ':' + 'generateContent';
 end;
 
 procedure TAICandidates.Refresh;
