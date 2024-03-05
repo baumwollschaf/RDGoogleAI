@@ -137,9 +137,9 @@ begin
     FRequest := TRESTRequest.Create(Self);
     FRequest.Method := TRESTRequestMethod.rmPost;
     FRequest.Client := FAIRest.GetRestClient;
-    FRequest.Resource := URIEncode(GetResourcePath + '?key=' + FAIRest.GetApiKey);
     FRequest.Response := FResponse;
   end;
+  FRequest.Resource := GetResourcePath + '?key=' + FAIRest.GetApiKey;
   if assigned(FAIRest.GetRequestInfoProc) then
     FAIRest.RequestInfoProc(FRequest.Resource, rGet);
 end;

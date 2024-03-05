@@ -159,7 +159,6 @@ object AppRDGoogleAIExmplMainForm: TAppRDGoogleAIExmplMainForm
     OnClick = Button3Click
   end
   object RDGoogleAIGemini1: TRDGoogleAIGemini
-    Proxy = '1'
     URL = 'https://generativelanguage.googleapis.com/v1beta'
     OnModelsLoaded = RDGoogleAIGemini1ModelsLoaded
     OnError = RDGoogleAIGemini1Error
