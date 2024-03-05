@@ -1,7 +1,6 @@
 # RDGoogleAI
-Google AI API Delphi Component. To be continued when API available in Germany.
-
-Delphi implementation and component of Google AI API.
+Delphi implementation of GoogleAI, Gemini API - event based, asynchronous.
+To be continued when API available in Germany.
 
 All you need is an own API key from here: https://aistudio.google.com/app/apikey
 
