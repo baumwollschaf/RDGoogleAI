@@ -33,12 +33,13 @@ type
   TRDGoogleAIConnection = class(TComponent)
   public const
     cVERSION = '1.0';
-    cDEF_MAX_OUTPUT_TOKENS = 400; // 100 means 60 to 80 words
-    cDEF_TEMP = 0.1;
-    cDEF_TOP_P = 0.95;
-    cDEF_TOP_K = 5;
+    cDEF_MAX_OUTPUT_TOKENS = 2048; // 100 means 60 to 80 words
+    cDEF_TEMP = 0.9;
+    cDEF_TOP_P = 1;
+    cDEF_TOP_K = 1;
   private
     FApiKey: string;
+    FCopyright: String;
     FInputSettings: TInputSettings;
     function GetVersion: String;
   protected
@@ -48,6 +49,7 @@ type
     destructor Destroy; override;
   published
     property ApiKey: string read FApiKey write FApiKey;
+    property Copyright: String read FCopyright;
   end;
 
   TRDGoogleAIRestClient = class abstract(TRDGoogleAIConnection)
@@ -118,7 +120,7 @@ type
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
   published
     property URL: string read GetURL write SetURL stored True;
-    property Model: String read FModel write FModel;
+    property Model: String read FModel{ write FModel};
     property RequestInfoProc: TRequestInfoProc read GetRequestInfoProc write SetRequestInfoProc;
     property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
@@ -126,7 +128,7 @@ type
   public
     procedure Cancel;
     procedure LoadModels;
-    procedure Prompt(AValue: String; AModel: TModel = nil);
+    procedure Prompt(AValue: String);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -154,6 +156,7 @@ end;
 constructor TRDGoogleAIConnection.Create(AOwner: TComponent);
 begin
   inherited;
+  FCopyright := 'Copyright © 2024 Ralph Dietrich.';
   FInputSettings := TInputSettings.Create;
   FInputSettings.GenerationConfig.MaxOutputTokens := cDEF_MAX_OUTPUT_TOKENS;
   FInputSettings.GenerationConfig.Temperature := cDEF_TEMP;
@@ -320,9 +323,11 @@ begin
   FAIModels.Refresh;
 end;
 
-procedure TRDGoolgeAI.Prompt(AValue: String; AModel: TModel);
+procedure TRDGoolgeAI.Prompt(AValue: String);
 begin
   FInputSettings.Contents.Clear;
+
+{ to be continued...
   var
     C: TContents := TContents.Create;
   var
@@ -330,6 +335,12 @@ begin
   P.Text := AValue;
   C.Parts.Add(P);
   FInputSettings.Contents.Add(C);
+}
+{$IFDEF DEBUG}
+{$IFDEF baumwollschaf}
+  TFile.AppendAllText('C:\Users\rdietrich\Desktop\Json.txt', FInputSettings.AsJson);
+{$ENDIF}
+{$ENDIF}
 
   if FAICandidates = nil then
   begin
@@ -340,24 +351,14 @@ begin
     cBody = '{"contents": [{"parts":[{"text": "%s"}]}]}'; // keep it simple
   var
     Body: String;
-  if AModel = nil then
-  begin
-    Body := Format(cBody, [AValue]);
-  end
-  else
-  begin
-    FInputSettings.GenerationConfig.MaxOutputTokens := AModel.OutputTokenLimit;
-    FInputSettings.GenerationConfig.Temperature := AModel.Temperature;
-    FInputSettings.GenerationConfig.TopK := AModel.TopK;
-    FInputSettings.GenerationConfig.TopP := AModel.TopP;
-    Body := FInputSettings.AsJson;
-    Model := AModel.Name;
-  end;
+  Body := Format(cBody, [AValue]);
 
   FAICandidates.Body := Body;
 
 {$IFDEF DEBUG}
+{$IFDEF baumwollschaf}
   TFile.AppendAllText('C:\Users\rdietrich\Desktop\Json.txt', FAICandidates.Body);
+{$ENDIF}
 {$ENDIF}
   FAICandidates.Refresh;
 end;

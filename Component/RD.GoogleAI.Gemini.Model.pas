@@ -140,6 +140,8 @@ begin
     FRequest.Resource := URIEncode(GetResourcePath + '?key=' + FAIRest.GetApiKey);
     FRequest.Response := FResponse;
   end;
+  if assigned(FAIRest.GetRequestInfoProc) then
+    FAIRest.RequestInfoProc(FRequest.Resource, rGet);
 end;
 
 { TAIModels }
@@ -213,8 +215,6 @@ begin
   FRequest.Method := TRESTRequestMethod.rmGet;
 
   try
-    if assigned(FAIRest.GetRequestInfoProc) then
-      FAIRest.RequestInfoProc(FRequest.Resource, rGet);
     FRequest.ExecuteAsync(ModelsCompletion, True, True, DoCompletionHandlerWithError);
   except
     on E: Exception do
@@ -292,8 +292,6 @@ begin
   inherited Refresh;
 
   try
-    if assigned(FAIRest.GetRequestInfoProc) then
-      FAIRest.RequestInfoProc(FRequest.Resource, rGet);
     FRequest.ExecuteAsync(CandidatesCompletion, True, True, DoCompletionHandlerWithError);
   except
     on E: Exception do

@@ -36,12 +36,16 @@ type
     edBaseURL: TEdit;
     Label6: TLabel;
     edApiKey: TEdit;
+    Button3: TButton;
+    Label7: TLabel;
+    Label8: TLabel;
     procedure RDGoogleAIGemini1Error(Sender: TObject; AType: string);
     procedure RDGoogleAIGemini1CandidatesLoaded(Sender: TObject; AType: TCandidates);
     procedure Button2Click(Sender: TObject);
     procedure RDGoogleAIGemini1ModelsLoaded(Sender: TObject; AType: TModels);
     procedure FormCreate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     procedure Init;
     function GetModel: TModel;
@@ -59,13 +63,18 @@ implementation
 procedure TAppRDGoogleAIExmplMainForm.Button1Click(Sender: TObject);
 begin
   Init;
-  RDGoogleAIGemini1.Prompt(edPrompt.Text, GetModel);
+  RDGoogleAIGemini1.Prompt(edPrompt.Text);
 end;
 
 procedure TAppRDGoogleAIExmplMainForm.Button2Click(Sender: TObject);
 begin
   Init;
   RDGoogleAIGemini1.LoadModels;
+end;
+
+procedure TAppRDGoogleAIExmplMainForm.Button3Click(Sender: TObject);
+begin
+  // not yet implemented
 end;
 
 procedure TAppRDGoogleAIExmplMainForm.FormCreate(Sender: TObject);
