@@ -221,6 +221,27 @@ type
     destructor Destroy; override;
   end;
 
+  TError = class
+  private
+    FCode: Integer;
+    FMessage: string;
+    FStatus: string;
+  published
+    property Code: Integer read FCode write FCode;
+    property Message: string read FMessage write FMessage;
+    property Status: string read FStatus write FStatus;
+  end;
+
+  TErrors = class(TJsonDTO)
+  private
+    FError: TError;
+  published
+    property Error: TError read FError;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+  end;
+
 implementation
 
 { TModels }
@@ -416,6 +437,18 @@ begin
   RefreshArray<TContents>(FContents, FContentsArray);
   RefreshArray<TSafetySettings>(FSafetySettings, FSafetySettingsArray);
   Result := inherited;
+end;
+
+constructor TErrors.Create;
+begin
+  inherited;
+  FError := TError.Create;
+end;
+
+destructor TErrors.Destroy;
+begin
+  FError.Free;
+  inherited;
 end;
 
 end.

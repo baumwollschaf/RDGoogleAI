@@ -102,6 +102,7 @@ type
     function GetRESTClient: TCustomRESTClient;
     function GetApiKey: String;
     function GetModelName: String;
+    function GetInputSettings: TInputSettings;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
@@ -279,6 +280,11 @@ begin
   Result := FApiKey;
 end;
 
+function TRDGoolgeAI.GetInputSettings: TInputSettings;
+begin
+  Result := FInputSettings;
+end;
+
 function TRDGoolgeAI.GetModelName: String;
 begin
   Result := FModel;
@@ -327,7 +333,6 @@ procedure TRDGoolgeAI.Prompt(AValue: String);
 begin
   FInputSettings.Contents.Clear;
 
-{ to be continued...
   var
     C: TContents := TContents.Create;
   var
@@ -335,7 +340,6 @@ begin
   P.Text := AValue;
   C.Parts.Add(P);
   FInputSettings.Contents.Add(C);
-}
 {$IFDEF DEBUG}
 {$IFDEF baumwollschaf}
   TFile.AppendAllText('C:\Users\rdietrich\Desktop\Json.txt', FInputSettings.AsJson);
@@ -346,14 +350,6 @@ begin
   begin
     FAICandidates := TAICandidates.Create(Self, Self);
   end;
-
-  const
-    cBody = '{"contents": [{"parts":[{"text": "%s"}]}]}'; // keep it simple
-  var
-    Body: String;
-  Body := Format(cBody, [AValue]);
-
-  FAICandidates.Body := Body;
 
 {$IFDEF DEBUG}
 {$IFDEF baumwollschaf}

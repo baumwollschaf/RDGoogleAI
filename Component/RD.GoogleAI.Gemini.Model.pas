@@ -32,6 +32,7 @@ uses
 type
   TAIBaseEndpoint = class(TComponent)
   protected
+    FBodyParam: TRESTRequestParameter;
     FAIRest: IAIRESTClient;
     [JSONMarshalled(False)]
     FResponse: TRESTResponse;
@@ -44,10 +45,10 @@ type
     function GetResourcePath: String; virtual;
     procedure DoCompletionHandlerWithError(AObject: TObject);
     procedure DoError(AMessage: String);
+    function CheckError(out AValue: String): Boolean;
   public
     procedure Cancel;
     procedure Refresh; virtual;
-    property Body: String read FBody write FBody;
     property LastError: string read FLastError;
     constructor Create(AOwner: TComponent; AAIRest: IAIRESTClient); reintroduce; virtual;
     destructor Destroy; override;
@@ -90,15 +91,55 @@ begin
   end;
 end;
 
+function TAIBaseEndpoint.CheckError(out AValue: String): Boolean;
+var
+  JsonObj: TJSONObject;
+begin
+  Result := True;
+  if FResponse.Status.ClientErrorBadRequest_400 then
+  begin
+    try
+      JsonObj := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(FResponse.Content), 0) as TJSONObject;
+    except
+      JsonObj := nil;
+    end;
+    if JsonObj <> nil then
+    begin
+      var
+        Errors: TErrors;
+      try
+        Errors := TJson.JsonToObject<TErrors>(TJSONObject(JsonObj));
+        if Errors <> nil then
+        begin
+          try
+            AValue := Errors.Error.Message;
+            Result := False;
+          finally
+            Errors.free;
+          end;
+        end;
+      finally
+        JsonObj.free;
+      end;
+    end;
+  end;
+end;
+
 constructor TAIBaseEndpoint.Create(AOwner: TComponent; AAIRest: IAIRESTClient);
 begin
   Assert(AAIRest <> nil);
   inherited Create(AOwner);
   FAIRest := AAIRest;
+  FBodyParam := TRESTRequestParameter.Create(nil);
+  FBodyParam.Kind := pkREQUESTBODY;
+  FBodyParam.Name := 'AnyBody';
+  FBodyParam.Value := '';
+  FBodyParam.ContentType := 'application/json';
 end;
 
 destructor TAIBaseEndpoint.Destroy;
 begin
+  FBodyParam.free;
   FreeAndNil(FResponse);
   FreeAndNil(FRequest);
   inherited;
@@ -141,7 +182,7 @@ begin
   end;
   FRequest.Resource := GetResourcePath + '?key=' + FAIRest.GetApiKey;
   if assigned(FAIRest.GetRequestInfoProc) then
-    FAIRest.RequestInfoProc(FRequest.Resource, rGet);
+    FAIRest.RequestInfoProc(FRequest.Resource, rcStart);
 end;
 
 { TAIModels }
@@ -177,15 +218,22 @@ begin
     if FResponse = nil then
       Exit;
 
-    if FResponse.StatusCode <> 200 then
+    if not FResponse.Status.SuccessOK_200 then
     begin
       FLastError := FResponse.StatusText;
+
+      var
+        Err: String;
+      if not CheckError(Err) then
+      begin
+        FLastError := Err;
+      end;
       DoError(FLastError);
       Exit;
     end;
 
     if assigned(FAIRest.RequestInfoProc) then
-      FAIRest.RequestInfoProc(FRequest.Resource, rFinish);
+      FAIRest.RequestInfoProc(FRequest.Resource, rcFinish);
 
     JsonObj := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(FResponse.Content), 0) as TJSONObject;
     if JsonObj = nil then
@@ -197,7 +245,7 @@ begin
         FModels := TJson.JsonToObject<TModels>(TJSONObject(JsonObj));
         DoFinishLoad(FModels);
       finally
-        JsonObj.Free;
+        JsonObj.free;
       end;
     except
       on E: Exception do
@@ -234,15 +282,22 @@ begin
     if FResponse = nil then
       Exit;
 
-    if FResponse.StatusCode <> 200 then
+    if not FResponse.Status.SuccessOK_200 then
     begin
       FLastError := FResponse.StatusText;
+
+      var
+        Err: String;
+      if not CheckError(Err) then
+      begin
+        FLastError := Err;
+      end;
       DoError(FLastError);
       Exit;
     end;
 
     if assigned(FAIRest.RequestInfoProc) then
-      FAIRest.RequestInfoProc(FRequest.Resource, rFinish);
+      FAIRest.RequestInfoProc(FRequest.Resource, rcFinish);
 
     JsonObj := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(FResponse.Content), 0) as TJSONObject;
     if JsonObj = nil then
@@ -254,7 +309,7 @@ begin
         FCandidates := TJson.JsonToObject<TCandidates>(TJSONObject(JsonObj));
         DoFinishLoad(FCandidates);
       finally
-        JsonObj.Free;
+        JsonObj.free;
       end;
     except
       on E: Exception do
@@ -290,6 +345,15 @@ end;
 procedure TAICandidates.Refresh;
 begin
   inherited Refresh;
+
+  FRequest.Body.ClearBody;
+  FRequest.Params.Clear;
+  var
+    s: string;
+  s := FAIRest.GetInputSettings.AsJson;
+
+  FBodyParam.Value := s; // Body !
+  FRequest.Params.AddItem.Assign(FBodyParam);
 
   try
     FRequest.ExecuteAsync(CandidatesCompletion, True, True, DoCompletionHandlerWithError);

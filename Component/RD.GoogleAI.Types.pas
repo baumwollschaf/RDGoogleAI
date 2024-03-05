@@ -7,8 +7,8 @@ uses
   RD.GoogleAI.DTO.Models;
 
 type
-  TGetOrFinish = (rGet, rFinish);
-  TRequestInfoProc = procedure(AURL: string; AGetOrFinish: TGetOrFinish) Of Object;
+  TRequestCallback = (rcStart, rcFinish);
+  TRequestInfoProc = procedure(AURL: string; AGetOrFinish: TRequestCallback) Of Object;
   TTypedEvent<T> = procedure(Sender: TObject; AType: T) of object;
 
   IAIRESTClient = interface
@@ -16,6 +16,7 @@ type
     function GetRESTClient: TCustomRESTClient;
     function GetApiKey: String;
     function GetModelName: String;
+    function GetInputSettings: TInputSettings;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
