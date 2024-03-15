@@ -180,6 +180,7 @@ begin
     FRequest.Client := FAIRest.GetRestClient;
     FRequest.Response := FResponse;
   end;
+  FRequest.Timeout := FAIRest.GetTimeOut;
   FRequest.Resource := GetResourcePath + '?key=' + FAIRest.GetApiKey;
   if assigned(FAIRest.GetRequestInfoProc) then
     FAIRest.RequestInfoProc(FRequest.Resource, rcStart);

@@ -32,7 +32,7 @@ type
 
   TRDGoogleAIConnection = class(TComponent)
   public const
-    cVERSION = '1.0';
+    cVERSION = '1.10';
     cDEF_MAX_OUTPUT_TOKENS = 2048; // 100 means 60 to 80 words
     cDEF_TEMP = 0.9;
     cDEF_TOP_P = 1;
@@ -69,6 +69,7 @@ type
     function GetProxyPort: Integer;
     procedure SetProxyPort(const Value: Integer);
   protected
+    FTimeOut: Integer;
     FRestClient: TCustomRESTClient;
     property BaseURL: string read GetBaseURL write SetBaseURL;
   public
@@ -81,6 +82,7 @@ type
     property AcceptEncoding: string read GetAcceptEncoding write SetAcceptEncoding stored True;
     property Proxy: string read GetProxy write SetProxy;
     property ProxyPort: Integer read GetProxyPort write SetProxyPort default 0;
+    property TimeOut: Integer read FTimeOut write FTimeOut default CRestDefaultTimeout;
   end;
 
   TRDGoolgeAI = class(TRDGoogleAIRestClient, IAIRESTClient)
@@ -103,6 +105,7 @@ type
     function GetApiKey: String;
     function GetModelName: String;
     function GetInputSettings: TInputSettings;
+    function GetTimeOut: Integer;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
@@ -121,7 +124,7 @@ type
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
   published
     property URL: string read GetURL write SetURL stored True;
-    property Model: String read FModel{ write FModel};
+    property Model: String read FModel { write FModel };
     property RequestInfoProc: TRequestInfoProc read GetRequestInfoProc write SetRequestInfoProc;
     property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
@@ -183,6 +186,7 @@ begin
   inherited Create(AOwner);
   FRestClient := TCustomRESTClient.Create(Self);
   FRestClient.UserAgent := cDEFAULT_USER_AGENT;
+  FTimeOut := CRestDefaultTimeout;
 end;
 
 destructor TRDGoogleAIRestClient.Destroy;
@@ -315,6 +319,11 @@ begin
   Result := FRestClient;
 end;
 
+function TRDGoolgeAI.GetTimeOut: Integer;
+begin
+  Result := FTimeOut;
+end;
+
 function TRDGoolgeAI.GetURL: string;
 begin
   Result := BaseURL;
@@ -345,7 +354,6 @@ begin
   TFile.AppendAllText('C:\Users\rdietrich\Desktop\Json.txt', FInputSettings.AsJson);
 {$ENDIF}
 {$ENDIF}
-
   if FAICandidates = nil then
   begin
     FAICandidates := TAICandidates.Create(Self, Self);

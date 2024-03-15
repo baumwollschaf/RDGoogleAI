@@ -17,6 +17,7 @@ type
     function GetApiKey: String;
     function GetModelName: String;
     function GetInputSettings: TInputSettings;
+    function GetTimeOut: Integer;
 
     function GetRequestInfoProc: TRequestInfoProc;
     procedure SetRequestInfoProc(const Value: TRequestInfoProc);
