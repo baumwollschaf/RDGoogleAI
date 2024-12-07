@@ -332,7 +332,7 @@ procedure TAICandidates.DoFinishLoad(ACandidates: TCandidates);
 begin
   if FAIRest = nil then
     Exit;
-  if assigned(FAIRest.OnModelsLoaded) then
+  if assigned(FAIRest.OnCandidatesLoaded) then
   begin
     FAIRest.OnCandidatesLoaded(Self, ACandidates);
   end;
