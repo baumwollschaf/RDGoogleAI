@@ -32,7 +32,7 @@ type
 
   TRDGoogleAIConnection = class(TComponent)
   public const
-    cVERSION = '1.10';
+    cVERSION = '1.20';
     cDEF_MAX_OUTPUT_TOKENS = 2048; // 100 means 60 to 80 words
     cDEF_TEMP = 0.9;
     cDEF_TOP_P = 1;
