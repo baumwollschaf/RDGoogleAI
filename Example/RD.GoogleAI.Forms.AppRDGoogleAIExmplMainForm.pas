@@ -100,6 +100,12 @@ begin
   MemoError.Text := '';
   RDGoogleAIGemini1.URL := edBaseURL.Text;
   RDGoogleAIGemini1.ApiKey := edApiKey.Text;
+  var
+    Model: TModel := GetModel;
+  if Model <> nil then
+  begin
+    RDGoogleAIGemini1.Model := Model.Name;
+  end;
 end;
 
 procedure TAppRDGoogleAIExmplMainForm.RDGoogleAIGemini1CandidatesLoaded(Sender: TObject; AType: TCandidates);

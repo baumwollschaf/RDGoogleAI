@@ -124,7 +124,7 @@ type
     cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
   published
     property URL: string read GetURL write SetURL stored True;
-    property Model: String read FModel { write FModel };
+    property Model: String read FModel write FModel ;
     property RequestInfoProc: TRequestInfoProc read GetRequestInfoProc write SetRequestInfoProc;
     property OnModelsLoaded: TTypedEvent<TModels> read GetOnModelsLoaded write SetOnModelsLoaded;
     property OnError: TTypedEvent<string> read GetOnError write SetOnError;
