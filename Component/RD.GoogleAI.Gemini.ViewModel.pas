@@ -121,7 +121,7 @@ type
 
   public const
     cDEF_MODEL = 'models/gemini-pro';
-    cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta';
+    cDEF_BASE_URL = 'https://generativelanguage.googleapis.com/v1';
   published
     property URL: string read GetURL write SetURL stored True;
     property Model: String read FModel write FModel ;

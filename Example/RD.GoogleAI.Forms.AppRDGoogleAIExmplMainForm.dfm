@@ -159,7 +159,8 @@ object AppRDGoogleAIExmplMainForm: TAppRDGoogleAIExmplMainForm
     OnClick = Button3Click
   end
   object RDGoogleAIGemini1: TRDGoogleAIGemini
-    URL = 'https://generativelanguage.googleapis.com/v1beta'
+    URL = 'https://generativelanguage.googleapis.com/v1'
+    Model = 'models/gemini-pro'
     OnModelsLoaded = RDGoogleAIGemini1ModelsLoaded
     OnError = RDGoogleAIGemini1Error
     OnCandidatesLoaded = RDGoogleAIGemini1CandidatesLoaded
