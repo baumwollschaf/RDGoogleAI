@@ -139,7 +139,7 @@ object AppRDGoogleAIExmplMainForm: TAppRDGoogleAIExmplMainForm
     Width = 489
     Height = 23
     TabOrder = 6
-    Text = 'https://generativelanguage.googleapis.com/v1beta'
+    Text = 'https://generativelanguage.googleapis.com/v1'
   end
   object edApiKey: TEdit
     Left = 8
